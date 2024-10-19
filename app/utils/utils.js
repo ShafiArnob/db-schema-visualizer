@@ -49,6 +49,7 @@ export const getNodesAndEdges = ({ models, connections }) => {
       sourceHandle: sourceId,
       targetHandle: connection.target,
       animated: true,
+      type: "smoothstep",
     };
   });
 

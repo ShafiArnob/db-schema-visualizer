@@ -6,7 +6,6 @@ import {
 } from "@/components/ui/resizable";
 import { Textarea } from "@/components/ui/textarea";
 import {
-  addEdge,
   Background,
   BackgroundVariant,
   Controls,
@@ -14,45 +13,28 @@ import {
   ReactFlow,
   useEdgesState,
   useNodesState,
-  useReactFlow,
-  ReactFlowProvider,
 } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import ModelNode from "./components/ModelNode";
 import { getInfoFromSchema, getNodesAndEdges } from "./utils/utils";
-import { schema } from "./utils/constant";
+import {} from "./utils/constant";
 
 const modelTypes = {
   model: ModelNode,
 };
 
 export default function Home() {
-  // const initialNodes = [
-  //   { id: "1", position: { x: 0, y: 0 }, data: { label: "1" } },
-  //   { id: "2", position: { x: 0, y: 100 }, data: { label: "2" } },
-  // ];
-  // const initialEdges = [{ id: "e1-2", source: "1", target: "2" }];
-
   const [nodes, setNodes, onNodesChange] = useNodesState([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
-  const { fitView } = useReactFlow();
 
   const [inputSchema, setInputSchema] = useState("");
-  // const onConnect = useCallback(
-  //   (params) => setEdges((eds) => addEdge(params, eds)),
-  //   [setEdges]
-  // );
 
   useEffect(() => {
     const { models, connections } = getInfoFromSchema(inputSchema);
     const { nodes, edges } = getNodesAndEdges({ models, connections });
     setNodes(nodes);
     setEdges(edges);
-
-    window.requestAnimationFrame(() => {
-      fitView();
-    });
   }, [inputSchema]);
 
   return (
