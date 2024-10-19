@@ -14,28 +14,51 @@ import {
   ReactFlow,
   useEdgesState,
   useNodesState,
+  useReactFlow,
+  ReactFlowProvider,
 } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
-import { useCallback } from "react";
+import { useCallback, useEffect, useState } from "react";
+import ModelNode from "./components/ModelNode";
+import { getInfoFromSchema, getNodesAndEdges } from "./utils/utils";
+import { schema } from "./utils/constant";
+
+const modelTypes = {
+  model: ModelNode,
+};
+
 export default function Home() {
-  const initialNodes = [
-    { id: "1", position: { x: 0, y: 0 }, data: { label: "1" } },
-    { id: "2", position: { x: 0, y: 100 }, data: { label: "2" } },
-  ];
-  const initialEdges = [{ id: "e1-2", source: "1", target: "2" }];
+  // const initialNodes = [
+  //   { id: "1", position: { x: 0, y: 0 }, data: { label: "1" } },
+  //   { id: "2", position: { x: 0, y: 100 }, data: { label: "2" } },
+  // ];
+  // const initialEdges = [{ id: "e1-2", source: "1", target: "2" }];
 
-  const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
-  const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
+  const [nodes, setNodes, onNodesChange] = useNodesState([]);
+  const [edges, setEdges, onEdgesChange] = useEdgesState([]);
+  const { fitView } = useReactFlow();
 
-  const onConnect = useCallback(
-    (params) => setEdges((eds) => addEdge(params, eds)),
-    [setEdges]
-  );
+  const [inputSchema, setInputSchema] = useState("");
+  // const onConnect = useCallback(
+  //   (params) => setEdges((eds) => addEdge(params, eds)),
+  //   [setEdges]
+  // );
+
+  useEffect(() => {
+    const { models, connections } = getInfoFromSchema(inputSchema);
+    const { nodes, edges } = getNodesAndEdges({ models, connections });
+    setNodes(nodes);
+    setEdges(edges);
+
+    window.requestAnimationFrame(() => {
+      fitView();
+    });
+  }, [inputSchema]);
 
   return (
     <div className="min-h-[calc(100vh-3rem-1px)] w-full flex ">
       <ResizablePanelGroup direction="horizontal" className="h-full ">
-        <ResizablePanel defaultSize={55}>
+        <ResizablePanel defaultSize={65}>
           <div
             style={{ width: "100%", height: "calc(100vh - 3rem - 1px)" }}
             className="p-1"
@@ -45,7 +68,8 @@ export default function Home() {
               edges={edges}
               onNodesChange={onNodesChange}
               onEdgesChange={onEdgesChange}
-              onConnect={onConnect}
+              // onConnect={onConnect}
+              nodeTypes={modelTypes}
               fitView
               fitViewOptions={{ padding: 2 }}
               colorMode="dark"
@@ -75,6 +99,8 @@ export default function Home() {
                 className="min-h-full"
                 style={{ resize: "none" }}
                 rows="20"
+                value={inputSchema}
+                onChange={(e) => setInputSchema(e.target.value)}
               />
             </div>
           </div>

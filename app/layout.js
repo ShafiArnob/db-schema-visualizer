@@ -7,16 +7,10 @@ import {
 } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/app-sidebar";
 import { Separator } from "@/components/ui/separator";
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb";
+
 import { ThemeProvider } from "@/components/theme-provider";
-import { ModeToggle } from "@/components/theme-selector";
+
+import { ReactFlowProvider } from "@xyflow/react";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -56,7 +50,7 @@ export default function RootLayout({ children }) {
                 enableSystem
                 disableTransitionOnChange
               >
-                {children}
+                <ReactFlowProvider>{children}</ReactFlowProvider>
               </ThemeProvider>
             </SidebarInset>
           </main>
